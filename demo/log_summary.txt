@@ -1,0 +1,3 @@
+file,line,error
+2025_28/Wed_16/mock_data.log, 3, "ERROR:This is not OK\n"
+2025_28/Wed_16/mock_data.log, 4, "CRITICAL:This is even worse\n"

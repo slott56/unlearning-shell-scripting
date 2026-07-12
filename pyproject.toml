@@ -1,0 +1,70 @@
+[project]
+name = "unlearning-shell-scripting"
+description = "Examples for the Unlearning Shell Scripting book."
+dependencies = [
+    "click>=8.4.2",
+    "psutil>=7.2.2",
+]
+readme = "README.rst"
+requires-python = ">=3.14"
+version = "2026.07"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+# LaTeX book is 6x9 size.
+# line-length = 60 # for LaTeX font size \\small
+# line-length = 74 # for LaTeX font size \\scriptsize
+# \\tiny might be too small.
+[tool.ruff]
+line-length = 72
+indent-width = 4
+target-version = "py314"
+
+[tool.tox]
+requires = ["tox>=4.19"]
+skipsdist = true
+base_python = "python>=3.14"
+env_list = ["3.15", "3.14"]
+
+[tool.tox.env_run_base]
+description = "Run test under {base_python}"
+runner = "uv-venv-lock-runner"
+package = "editable"
+deps = ["pytest"]
+commands = [
+    ["pytest", "-vv", "--cov-reset", "tests"],
+    ["pytest", "-vv", { replace = "glob", pattern = "src/*.py", extend = true }],
+    ["pytest", "-vv", "--doctest-modules", "src"],
+]
+set_env = { PYTHONPATH = "{tox_root}{/}src" }
+
+
+[tool.tox.env.coverage]
+runner = "uv-venv-lock-runner"
+package = "editable"
+deps = ["pytest", "pytest-cov"]
+commands = [
+    ["pytest", "--cov-reset"],
+    ["pytest", "--cov=src", "tests"],
+    ["pytest", "--cov=src", "--cov-append", "-vv", { replace = "glob", pattern = "src/*.py", extend = true }],
+    ["pytest", "--cov=src", "--cov-append", "--cov-report=term-missing", "--doctest-modules", "src"],
+]
+
+[tool.tox.env.static]
+deps = ["ruff", "pyright"]
+commands = [
+    ["ruff", "format", "src"],
+    ["pyright", "src"],
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.411",
+    "pytest>=9.1.1",
+    "ruff>=0.15.21",
+    "tox>=4.56.4",
+    "pytest-cov>=7.1.0",
+    "tox-uv>=1.35.2",
+]
